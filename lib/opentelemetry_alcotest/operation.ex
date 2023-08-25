@@ -47,6 +47,8 @@ defmodule OpentelemetryAlcotest.Operation do
         _config
       )
       when is_list(options) do
+    IO.inspect(options)
+
     with {:ok, schema} <- Keyword.fetch(options, :schema),
          {:ok, variables} <- Keyword.fetch(options, :variables),
          {:ok, variables} <- Jason.encode(variables),
@@ -139,6 +141,16 @@ defmodule OpentelemetryAlcotest.Operation do
          arguments: arguments
        }) do
     %{name: name, arguments: serialize_arguments(arguments)}
+  end
+
+  defp serialize_field(%Absinthe.Blueprint.Document.Fragment.Spread{}), do: "*"
+
+  # TODO: There might be more relevant info here.
+  defp serialize_field(%Absinthe.Blueprint.Document.Fragment.Inline{
+         selections: selections,
+         type_condition: %Absinthe.Blueprint.TypeReference.Name{name: name}
+       }) do
+    %{name: name, selections: serialize_selections(selections)}
   end
 
   defp serialize_arguments([]), do: []
