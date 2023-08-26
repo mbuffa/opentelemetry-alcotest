@@ -24,7 +24,6 @@ defmodule OpentelemetryAlcotest.MixProject do
   defp deps do
     [
       {:absinthe, "~> 1.7.0"},
-      {:jason, "~> 1.2"},
       {:opentelemetry_api, "~> 1.1"},
       {:telemetry, "~> 0.4 or ~> 1.0"}
     ]

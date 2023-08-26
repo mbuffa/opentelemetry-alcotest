@@ -4,6 +4,7 @@ defmodule OpentelemetryAlcotest.Operation do
   require Record
 
   alias Absinthe.Blueprint
+  alias OpentelemetryAlcotest.Common.JsonEncoder
 
   @graphql_document Conventions.graphql_document()
   @graphql_operation_name Conventions.graphql_operation_name()
@@ -47,11 +48,9 @@ defmodule OpentelemetryAlcotest.Operation do
         _config
       )
       when is_list(options) do
-    IO.inspect(options)
-
     with {:ok, schema} <- Keyword.fetch(options, :schema),
          {:ok, variables} <- Keyword.fetch(options, :variables),
-         {:ok, variables} <- Jason.encode(variables),
+         {:ok, variables} <- serialize_variables(variables),
          {:ok, _context} <- Keyword.fetch(options, :context) do
       # IO.inspect({:start, :name, name}, limit: :infinity)
       # IO.inspect({:start, :measurement, measurement}, limit: :infinity)
@@ -101,8 +100,8 @@ defmodule OpentelemetryAlcotest.Operation do
         {@graphql_operation_name, operation_name},
         {@graphql_request_selections, operation_selections},
         {@graphql_request_complexity, operation_complexity},
-        {@graphql_response_errors, Jason.encode!(errors)},
-        {@graphql_response_result, Jason.encode!(result)}
+        {@graphql_response_errors, JsonEncoder.encode(errors)},
+        {@graphql_response_result, JsonEncoder.encode(result)}
       ]
 
       span_name = "#{to_string(operation_type)} #{to_string(operation_name)}"
@@ -117,6 +116,17 @@ defmodule OpentelemetryAlcotest.Operation do
     else
       error ->
         IO.inspect({:stop_failed, error})
+    end
+  end
+
+  # TODO: Handle types that can't be serialized (like binary strings)
+  defp serialize_variables(%{} = variables) do
+    case JsonEncoder.encode(variables) do
+      str when is_binary(str) ->
+        {:ok, str}
+
+      err ->
+        {:error, "Parse error: #{inspect(err)}"}
     end
   end
 
