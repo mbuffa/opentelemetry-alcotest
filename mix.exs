@@ -1,9 +1,9 @@
-defmodule OpentelemetryAlcotest.MixProject do
+defmodule OpentelemetryBreathalyzer.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :opentelemetry_alcotest,
+      app: :opentelemetry_breathalyzer,
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
@@ -32,17 +32,17 @@ defmodule OpentelemetryAlcotest.MixProject do
 
   defp docs do
     [
-      main: "OpentelemetryAlcotest",
+      main: "OpentelemetryBreathalyzer",
       formatters: ["html"]
     ]
   end
 
   defp package do
     [
-      name: "opentelemetry-alcotest",
+      name: "opentelemetry-breathalyzer",
       maintainers: ["Maxime Buffa"],
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/mbuffa/opentelemetry-alcotest"}
+      links: %{"Github" => "https://github.com/mbuffa/opentelemetry-breathalyzer"}
     ]
   end
 end

@@ -1,4 +1,4 @@
-defmodule OpentelemetryAlcotest.Operation do
+defmodule OpentelemetryBreathalyzer.Operation do
   require OpenTelemetry.Tracer, as: Tracer
   require OpenTelemetry.SemanticConventions.Trace, as: Conventions
   require Record

@@ -1,6 +1,6 @@
-defmodule OpentelemetryAlcotest do
+defmodule OpentelemetryBreathalyzer do
   @moduledoc """
-  Documentation for `OpentelemetryAlcotest`.
+  Documentation for `OpentelemetryBreathalyzer`.
 
   TODO
   """

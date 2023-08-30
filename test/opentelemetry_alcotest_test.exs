@@ -1,8 +1,8 @@
-defmodule OpentelemetryAlcotestTest do
+defmodule OpentelemetryBreathalyzerTest do
   use ExUnit.Case
-  doctest OpentelemetryAlcotest
+  doctest OpentelemetryBreathalyzer
 
   test "greets the world" do
-    assert OpentelemetryAlcotest.hello() == :world
+    assert OpentelemetryBreathalyzer.hello() == :world
   end
 end
