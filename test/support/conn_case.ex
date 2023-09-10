@@ -29,8 +29,6 @@ defmodule OpentelemetryBreathalyzerWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint OpentelemetryBreathalyzerWeb.Endpoint
-
-      # use OpentelemetryBreathalyzerWeb, :verified_routes
     end
   end
 
