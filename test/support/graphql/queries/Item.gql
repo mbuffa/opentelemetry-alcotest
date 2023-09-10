@@ -1,0 +1,6 @@
+query Item($id: ID!) {
+  item(id: $id) {
+    id
+    name
+  }
+}

@@ -47,7 +47,7 @@ defmodule OpentelemetryBreathalyzer.Operation do
         _config
       )
       when is_list(options) do
-    IO.inspect(options)
+    # IO.inspect(options)
 
     with {:ok, schema} <- Keyword.fetch(options, :schema),
          {:ok, variables} <- Keyword.fetch(options, :variables),

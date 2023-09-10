@@ -9,9 +9,14 @@ defmodule OpentelemetryBreathalyzer.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
-      package: package()
+      package: package(),
+      elixirc_paths: elixirc_paths(Mix.env()),
+      aliases: aliases()
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help compile.app" to learn about applications.
   def application do
@@ -26,7 +31,15 @@ defmodule OpentelemetryBreathalyzer.MixProject do
       {:absinthe, "~> 1.7.0"},
       {:jason, "~> 1.2"},
       {:opentelemetry_api, "~> 1.1"},
-      {:telemetry, "~> 0.4 or ~> 1.0"}
+      {:telemetry, "~> 0.4 or ~> 1.0"},
+      # Test dependencies
+      {:ecto_sql, "~> 3.10", only: :test},
+      {:postgrex, ">= 0.0.0", only: :test},
+      {:phoenix, "~> 1.7", only: :test},
+      {:absinthe_phoenix, "~> 2.0", only: :test},
+      {:wormwood, "~> 0.1.3", only: :test},
+      # Dev dependencies
+      {:credo, "~> 1.7", only: :dev}
     ]
   end
 
@@ -43,6 +56,16 @@ defmodule OpentelemetryBreathalyzer.MixProject do
       maintainers: ["Maxime Buffa"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/mbuffa/opentelemetry-breathalyzer"}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: [
+        "ecto.create --quiet",
+        "ecto.migrate",
+        "test"
+      ]
     ]
   end
 end

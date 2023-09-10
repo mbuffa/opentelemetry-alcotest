@@ -13,7 +13,7 @@ defmodule OpentelemetryBreathalyzer do
   alias __MODULE__.Operation
 
   def setup(_instrumentation_opts \\ []) do
-    # FIXME
+    # FIXME: Pull actual configuration from config
     config = %{}
 
     :telemetry.attach(
