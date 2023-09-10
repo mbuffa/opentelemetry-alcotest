@@ -1,4 +1,4 @@
-defmodule Web.GQLSubscriptionCase do
+defmodule OpentelemetryBreathalyzerWeb.GQLSubscriptionCase do
   @moduledoc false
 
   use ExUnit.CaseTemplate
@@ -10,14 +10,14 @@ defmodule Web.GQLSubscriptionCase do
       import Phoenix.ChannelTest
 
       # The default endpoint for testing
-      @endpoint Web.Endpoint
+      @endpoint OpentelemetryBreathalyzerWeb.Endpoint
 
       use Absinthe.Phoenix.SubscriptionTest,
         schema: Keyword.fetch!(unquote(opts), :schema)
 
       @socket Keyword.fetch!(unquote(opts), :socket)
 
-      import Web.GQLSubscriptionCase
+      import OpentelemetryBreathalyzerWeb.GQLSubscriptionCase
 
       defp get_socket_and_subscribe(endpoint, socket_params \\ %{}) do
         case get_socket(endpoint, socket_params) do

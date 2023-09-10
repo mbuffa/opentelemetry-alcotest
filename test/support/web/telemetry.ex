@@ -1,4 +1,4 @@
-defmodule Web.Telemetry do
+defmodule OpentelemetryBreathalyzerWeb.Telemetry do
   use Supervisor
 
   # import Telemetry.Metrics

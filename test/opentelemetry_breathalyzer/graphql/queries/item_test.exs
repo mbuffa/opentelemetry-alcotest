@@ -1,9 +1,9 @@
 defmodule OpentelemetryBreathalyzer.Graphql.Queries.ItemTest do
-  use Web.ConnCase
+  use OpentelemetryBreathalyzerWeb.ConnCase
   use Wormwood.GQLCase
 
   load_gql(
-    Web.Schema,
+    OpentelemetryBreathalyzerWeb.Schema,
     "test/support/graphql/queries/Item.gql"
   )
 

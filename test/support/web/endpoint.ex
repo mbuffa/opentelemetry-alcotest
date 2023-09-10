@@ -1,4 +1,4 @@
-defmodule Web.Endpoint do
+defmodule OpentelemetryBreathalyzerWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :opentelemetry_breathalyzer
   use Absinthe.Phoenix.Endpoint
 
@@ -43,5 +43,5 @@ defmodule Web.Endpoint do
   plug(Plug.MethodOverride)
   plug(Plug.Head)
   plug(Plug.Session, @session_options)
-  plug(Web.Router)
+  plug(OpentelemetryBreathalyzerWeb.Router)
 end

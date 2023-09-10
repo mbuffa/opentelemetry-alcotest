@@ -1,4 +1,4 @@
-defmodule Web.Schema do
+defmodule OpentelemetryBreathalyzerWeb.Schema do
   use Absinthe.Schema
 
   @items %{

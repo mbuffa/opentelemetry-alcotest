@@ -18,9 +18,9 @@ defmodule TestSupervisor do
     [
       {Phoenix.PubSub, name: OpentelemetryBreathalyzer.PubSub},
       OpentelemetryBreathalyzer.Repo,
-      Web.Telemetry,
-      Web.Endpoint,
-      {Absinthe.Subscription, Web.Endpoint}
+      OpentelemetryBreathalyzerWeb.Telemetry,
+      OpentelemetryBreathalyzerWeb.Endpoint,
+      {Absinthe.Subscription, OpentelemetryBreathalyzerWeb.Endpoint}
     ]
   end
 end

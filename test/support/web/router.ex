@@ -1,5 +1,5 @@
-defmodule Web.Router do
-  use Web, :router
+defmodule OpentelemetryBreathalyzerWeb.Router do
+  use OpentelemetryBreathalyzerWeb, :router
 
   pipeline :api do
     plug(:accepts, ["json", "multipart"])
@@ -9,8 +9,8 @@ defmodule Web.Router do
     pipe_through(:api)
 
     forward("/", Absinthe.Plug,
-      schema: Web.Schema,
-      socket: Web.Socket
+      schema: OpentelemetryBreathalyzerWeb.Schema,
+      socket: OpentelemetryBreathalyzerWeb.Socket
     )
   end
 end

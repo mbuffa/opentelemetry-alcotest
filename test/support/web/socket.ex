@@ -1,6 +1,6 @@
-defmodule Web.Socket do
+defmodule OpentelemetryBreathalyzerWeb.Socket do
   use Phoenix.Socket
-  use Absinthe.Phoenix.Socket, schema: Web.Schema
+  use Absinthe.Phoenix.Socket, schema: OpentelemetryBreathalyzerWeb.Schema
 
   @impl true
   def connect(_params, socket, _connect_info) do

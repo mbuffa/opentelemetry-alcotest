@@ -1,4 +1,4 @@
-defmodule Web.ConnCase do
+defmodule OpentelemetryBreathalyzerWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule Web.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use Web.ConnCase, async: true`, although
+  by setting `use OpentelemetryBreathalyzerWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -22,15 +22,15 @@ defmodule Web.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import Web.ConnCase
+      import OpentelemetryBreathalyzerWeb.ConnCase
 
       alias Plug.Conn
-      alias Web.Router.Helpers, as: Routes
+      alias OpentelemetryBreathalyzerWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint Web.Endpoint
+      @endpoint OpentelemetryBreathalyzerWeb.Endpoint
 
-      # use Web, :verified_routes
+      # use OpentelemetryBreathalyzerWeb, :verified_routes
     end
   end
 

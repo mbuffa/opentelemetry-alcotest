@@ -1,6 +1,6 @@
 import Config
 
-config :opentelemetry_breathalyzer, Web.Endpoint,
+config :opentelemetry_breathalyzer, OpentelemetryBreathalyzerWeb.Endpoint,
   http: [port: 4002],
   server: false,
   pubsub_server: OpentelemetryBreathalyzer.PubSub

@@ -1,12 +1,12 @@
-defmodule Web do
+defmodule OpentelemetryBreathalyzerWeb do
   @moduledoc """
-  The entrypoint for defining your web interface, such
+  The entrypoint for defining your OpentelemetryBreathalyzerWeb interface, such
   as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
-      use Web, :controller
-      use Web, :html
+      use OpentelemetryBreathalyzerWeb, :controller
+      use OpentelemetryBreathalyzerWeb, :html
 
   The definitions below will be executed for every controller,
   component, etc, so keep them short and clean, focused
@@ -90,9 +90,9 @@ defmodule Web do
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: Web.Endpoint,
-        router: Web.Router,
-        statics: Web.static_paths()
+        endpoint: OpentelemetryBreathalyzerWeb.Endpoint,
+        router: OpentelemetryBreathalyzerWeb.Router,
+        statics: OpentelemetryBreathalyzerWeb.static_paths()
     end
   end
 
