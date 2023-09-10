@@ -52,11 +52,11 @@ defmodule OpentelemetryBreathalyzer.Operation do
     with {:ok, schema} <- Keyword.fetch(options, :schema),
          {:ok, variables} <- Keyword.fetch(options, :variables),
          {:ok, variables} <- Jason.encode(variables),
-         {:ok, _context} <- Keyword.fetch(options, :context) do
+         {:ok, context} <- Keyword.fetch(options, :context) do
       # IO.inspect({:start, :name, name}, limit: :infinity)
       # IO.inspect({:start, :measurement, measurement}, limit: :infinity)
       # IO.inspect({:start, :metadata, metadata}, limit: :infinity)
-      # IO.inspect({:start, schema, input, variables, context}, limit: :infinity)
+      IO.inspect({:start, schema, input, variables, context}, limit: :infinity)
 
       attributes = [
         {@graphql_document, input},
@@ -112,6 +112,19 @@ defmodule OpentelemetryBreathalyzer.Operation do
       Tracer.set_attributes(attributes)
       Tracer.end_span()
       restore_span_context()
+
+      IO.inspect(
+        {
+          :stop,
+          operation_name,
+          operation_type,
+          operation_selections,
+          operation_complexity,
+          errors,
+          result
+        },
+        limit: :infinity
+      )
 
       :ok
     else

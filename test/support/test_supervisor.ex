@@ -11,7 +11,9 @@ defmodule TestSupervisor do
   end
 
   defp setup_opentelemetry do
-    OpentelemetryBreathalyzer.setup()
+    :ok = OpentelemetryBreathalyzer.setup()
+    :ok = OpentelemetryEcto.setup([:opentelemetry_breathalyzer, :repo])
+    :ok = OpentelemetryPhoenix.setup()
   end
 
   defp children do
