@@ -7,24 +7,3 @@ services:
       POSTGRES_USER: postgres
     ports:
       - 5432:5432
-
-  otel:
-    image: otel/opentelemetry-collector-contrib-dev:latest
-    command: [ "--config=/etc/otel-collector-config.yaml" ]
-    ports:
-      - "4318:4318"
-      - '55681:55681'
-      - '55680:55680'
-      - "55679:55679"
-    volumes:
-      - ./otel-collector-config.local.yaml:/etc/otel-collector-config.yaml
-    depends_on:
-      - zipkin
-
-  zipkin:
-    image: openzipkin/zipkin
-    container_name: "zipkin"
-    ports:
-      - '9411:9411'
-    environment:
-      JAVA_OPTS: "-Xms1g -Xmx1g -XX:+ExitOnOutOfMemoryError"

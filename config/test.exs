@@ -17,12 +17,8 @@ config :opentelemetry_breathalyzer, OpentelemetryBreathalyzer.Repo,
 config :opentelemetry_breathalyzer, ecto_repos: [OpentelemetryBreathalyzer.Repo]
 
 config :opentelemetry,
-       :processors,
-       otel_batch_processor: %{
-         # Using `localhost` here since we are starting outside docker-compose where
-         # otel would refer to the hostname of the OpenCollector,
-         #
-         # If you are running in docker compose, kindly change it to the correct
-         # hostname: `otel`
-         exporter: {:opentelemetry_exporter, %{endpoints: [{:http, "localhost", 4318, []}]}}
-       }
+  traces_exporter: :none
+
+config :opentelemetry, :processors, [
+  {:otel_simple_processor, %{}}
+]

@@ -10,29 +10,67 @@ defmodule OpentelemetryBreathalyzer do
 
   require Logger
 
-  alias __MODULE__.Operation
+  alias __MODULE__.{
+    ExecuteOperation,
+    ResolveField
+  }
 
   def setup(_instrumentation_opts \\ []) do
     # FIXME: Pull actual configuration from config
     config = %{}
 
-    :telemetry.attach(
-      {Operation, :operation_start},
-      [:absinthe, :execute, :operation, :start],
-      &Operation.handle_operation_start/4,
-      config
-    )
-
-    :telemetry.attach(
-      {Operation, :operation_stop},
-      [:absinthe, :execute, :operation, :stop],
-      &Operation.handle_operation_stop/4,
-      config
-    )
+    :ok = attach_execute_operation_handler(config)
+    :ok = attach_resolve_field_handler(config)
   end
 
   def teardown do
-    :telemetry.detach({Operation, :operation_start})
-    :telemetry.detach({Operation, :operation_stop})
+    detach_execute_operation_handler()
+    detach_resolve_field_handler()
+  end
+
+  def attach_execute_operation_handler(config) do
+    :ok =
+      :telemetry.attach(
+        {ExecuteOperation, :start},
+        [:absinthe, :execute, :operation, :start],
+        &ExecuteOperation.handle_start/4,
+        config
+      )
+
+    :ok =
+      :telemetry.attach(
+        {ExecuteOperation, :stop},
+        [:absinthe, :execute, :operation, :stop],
+        &ExecuteOperation.handle_stop/4,
+        config
+      )
+  end
+
+  def detach_execute_operation_handler do
+    :telemetry.detach({ExecuteOperation, :start})
+    :telemetry.detach({ExecuteOperation, :stop})
+  end
+
+  def attach_resolve_field_handler(config) do
+    :ok =
+      :telemetry.attach(
+        {ResolveField, :start},
+        [:absinthe, :resolve, :field, :start],
+        &ResolveField.handle_start/4,
+        config
+      )
+
+    :ok =
+      :telemetry.attach(
+        {ResolveField, :stop},
+        [:absinthe, :resolve, :field, :stop],
+        &ResolveField.handle_stop/4,
+        config
+      )
+  end
+
+  def detach_resolve_field_handler() do
+    :telemetry.detach({ResolveField, :start})
+    :telemetry.detach({ResolveField, :stop})
   end
 end

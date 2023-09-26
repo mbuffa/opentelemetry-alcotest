@@ -30,7 +30,8 @@ defmodule OpentelemetryBreathalyzer.MixProject do
     [
       {:absinthe, "~> 1.7.0"},
       {:jason, "~> 1.2"},
-      {:opentelemetry_api, "~> 1.1"},
+      {:opentelemetry, "~> 1.3"},
+      {:opentelemetry_api, "~> 1.2"},
       {:telemetry, "~> 0.4 or ~> 1.0"},
       # Test dependencies
       {:ecto_sql, "~> 3.10", only: :test},
@@ -38,9 +39,9 @@ defmodule OpentelemetryBreathalyzer.MixProject do
       {:phoenix, "~> 1.7", only: :test},
       {:absinthe_phoenix, "~> 2.0", only: :test},
       {:wormwood, "~> 0.1.3", only: :test},
-      {:opentelemetry_exporter, "~> 1.4", only: :test},
-      {:opentelemetry_ecto, "~> 1.1", only: :test},
-      {:opentelemetry_phoenix, "~> 1.1", only: :test},
+      # {:opentelemetry_exporter, "~> 1.4", only: :test},
+      # {:opentelemetry_ecto, "~> 1.1", only: :test},
+      # {:opentelemetry_phoenix, "~> 1.1", only: :test},
       # Dev dependencies
       {:credo, "~> 1.7", only: :dev}
     ]

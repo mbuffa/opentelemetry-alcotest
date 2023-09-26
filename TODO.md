@@ -5,6 +5,6 @@
 * [x] Add the minimum requirements for testing (Phoenix app, GraphQL schema...).
 * [ ] Add a Github CI flow.
 * Support more Absinthe hooks
-  * [ ] Resolve
+  * [x] Resolve
   * [ ] Subscription
   * [ ] Middleware
