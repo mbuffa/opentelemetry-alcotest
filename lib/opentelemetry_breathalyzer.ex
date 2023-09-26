@@ -12,20 +12,23 @@ defmodule OpentelemetryBreathalyzer do
 
   alias __MODULE__.{
     ExecuteOperation,
-    ResolveField
+    ResolveField,
+    ExecuteMiddleware
   }
 
   def setup(_instrumentation_opts \\ []) do
-    # FIXME: Pull actual configuration from config
+    # FIXME: Pull actual configuration from env
     config = %{}
 
     :ok = attach_execute_operation_handler(config)
     :ok = attach_resolve_field_handler(config)
+    :ok = attach_execute_middleware_handler(config)
   end
 
   def teardown do
     detach_execute_operation_handler()
     detach_resolve_field_handler()
+    detach_execute_middleware_handler()
   end
 
   def attach_execute_operation_handler(config) do
@@ -72,5 +75,28 @@ defmodule OpentelemetryBreathalyzer do
   def detach_resolve_field_handler() do
     :telemetry.detach({ResolveField, :start})
     :telemetry.detach({ResolveField, :stop})
+  end
+
+  def attach_execute_middleware_handler(config) do
+    :ok =
+      :telemetry.attach(
+        {ExecuteMiddleware, :start},
+        [:absinthe, :middleware, :batch, :start],
+        &ExecuteMiddleware.handle_start/4,
+        config
+      )
+
+    :ok =
+      :telemetry.attach(
+        {ExecuteMiddleware, :stop},
+        [:absinthe, :middleware, :batch, :stop],
+        &ExecuteMiddleware.handle_stop/4,
+        config
+      )
+  end
+
+  def detach_execute_middleware_handler() do
+    :telemetry.detach({ExecuteMiddleware, :start})
+    :telemetry.detach({ExecuteMiddleware, :stop})
   end
 end

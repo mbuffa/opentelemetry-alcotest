@@ -30,7 +30,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperationTest do
 
     assert %{
              :"graphql.document" =>
-               "query Item($id: ID!) {\n  item(id: $id) {\n    id\n    name\n  }\n}",
+               "query Item($id: ID!) {\n  item(id: $id) {\n    id\n    name\n    author {\n      id\n      name\n    }\n  }\n}",
              :"graphql.operation.name" => "Item",
              :"graphql.operation.type" => :query,
              "graphql.request.complexity" => nil,
@@ -38,7 +38,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperationTest do
              "graphql.request.variables" => "{\"id\":\"foo\"}",
              "graphql.response.errors" => "[]",
              "graphql.response.result" =>
-               "{\"data\":{\"item\":{\"id\":\"foo\",\"name\":\"Foo\"}}}"
-           } = attributes
+               "{\"data\":{\"item\":{\"author\":{\"id\":\"alice\",\"name\":\"Alice\"},\"id\":\"foo\",\"name\":\"Foo\"}}}"
+           } == attributes
   end
 end
