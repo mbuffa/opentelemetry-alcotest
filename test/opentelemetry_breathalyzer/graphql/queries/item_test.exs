@@ -4,7 +4,7 @@ defmodule OpentelemetryBreathalyzer.Graphql.Queries.ItemTest do
 
   load_gql(
     OpentelemetryBreathalyzerWeb.Schema,
-    "test/support/graphql/queries/Item.gql"
+    "test/support/web/graphql/queries/Item.gql"
   )
 
   describe "Item.gql" do

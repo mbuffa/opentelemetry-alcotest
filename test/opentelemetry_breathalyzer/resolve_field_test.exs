@@ -4,7 +4,7 @@ defmodule OpentelemetryBreathalyzer.ResolveFieldTest do
   setup do
     OpentelemetryBreathalyzer.attach_resolve_field_handler(%{})
 
-    {:ok, query} = File.read("test/support/graphql/queries/Item.gql")
+    {:ok, query} = File.read("test/support/web/graphql/queries/Item.gql")
 
     {:ok, data} =
       Absinthe.run(query, OpentelemetryBreathalyzerWeb.Schema, variables: %{"id" => "foo"})
