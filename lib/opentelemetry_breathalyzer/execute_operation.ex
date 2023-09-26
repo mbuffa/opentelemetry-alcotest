@@ -29,17 +29,10 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
         _config
       )
       when is_list(options) do
-    # IO.inspect(options)
-
     with {:ok, schema} <- Keyword.fetch(options, :schema),
          {:ok, variables} <- Keyword.fetch(options, :variables),
          {:ok, variables} <- Jason.encode(variables),
          {:ok, _context} <- Keyword.fetch(options, :context) do
-      # IO.inspect({:start, :name, name}, limit: :infinity)
-      # IO.inspect({:start, :measurement, measurement}, limit: :infinity)
-      # IO.inspect({:start, :metadata, metadata}, limit: :infinity)
-      # IO.inspect({:start, schema, input, variables, context}, limit: :infinity)
-
       attributes = [
         {@graphql_document, input},
         {@graphql_request_variables, variables},
@@ -49,29 +42,21 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
       put_span_context_from_parent()
       span = Tracer.start_span("GraphQL Operation", %{kind: :server, attributes: attributes})
 
-      # IO.inspect(span, label: :operation_span)
-
       Tracer.set_current_span(span)
     else
-      error ->
-        nil
-        # IO.inspect({:start_failed, error})
+      _error -> nil
     end
   end
 
   def handle_start(_, _, _, _), do: :error
 
-  # TODO: Add status depending on errors.
+  # TODO: Set status.
   def handle_stop(
         [:absinthe, :execute, :operation, :stop] = _name,
         _measurement,
         %{blueprint: %Absinthe.Blueprint{result: result} = blueprint} = _metadata,
         _config
       ) do
-    # IO.inspect({:stop, :name, name}, limit: :infinity)
-    # IO.inspect({:stop, :measurement, measurement}, limit: :infinity)
-    # IO.inspect({:stop, :metadata, metadata}, limit: :infinity)
-
     with %Absinthe.Blueprint.Document.Operation{
            name: operation_name,
            type: operation_type,
@@ -98,24 +83,9 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
       Tracer.end_span()
       restore_span_context()
 
-      # IO.inspect(
-      #   {
-      #     :stop,
-      #     operation_name,
-      #     operation_type,
-      #     operation_selections,
-      #     operation_complexity,
-      #     errors,
-      #     result
-      #   },
-      #   limit: :infinity
-      # )
-
       :ok
     else
-      error ->
-        nil
-        # IO.inspect({:stop_failed, error})
+      _error -> nil
     end
   end
 

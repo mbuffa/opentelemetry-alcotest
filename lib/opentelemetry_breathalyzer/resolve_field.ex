@@ -16,9 +16,6 @@ defmodule OpentelemetryBreathalyzer.ResolveField do
         } = _metadata,
         _config
       ) do
-    # IO.inspect(metadata)
-    # IO.inspect(:resolve, measurement, label: :start)
-
     put_span_context_from_parent()
     span = Tracer.start_span("GraphQL Resolve", %{kind: :server, attributes: []})
 
@@ -42,9 +39,6 @@ defmodule OpentelemetryBreathalyzer.ResolveField do
         } = _metadata,
         _config
       ) do
-    # IO.inspect(metadata)
-    # IO.inspect(:resolve, measurement, label: :stop)
-
     Tracer.update_name(name)
 
     Tracer.end_span()
