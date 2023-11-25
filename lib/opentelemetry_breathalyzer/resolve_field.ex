@@ -1,4 +1,5 @@
 defmodule OpentelemetryBreathalyzer.ResolveField do
+  @moduledoc false
   use OpentelemetryBreathalyzer.Traceable
 
   def handle_start(name, measurement, metadata, config)

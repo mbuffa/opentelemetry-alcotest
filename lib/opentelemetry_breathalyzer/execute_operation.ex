@@ -1,9 +1,12 @@
 defmodule OpentelemetryBreathalyzer.ExecuteOperation do
+  @moduledoc false
+
   use OpentelemetryBreathalyzer.Traceable
 
   require OpenTelemetry.SemanticConventions.Trace, as: Conventions
 
   alias Absinthe.Blueprint
+  alias OpentelemetryBreathalyzer.Util
 
   @graphql_document Conventions.graphql_document()
   @graphql_operation_name Conventions.graphql_operation_name()
@@ -13,31 +16,53 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
   @graphql_request_selections "graphql.request.selections"
   @graphql_request_variables "graphql.request.variables"
   @graphql_request_complexity "graphql.request.complexity"
+  @graphql_request_context "graphql.request.context"
 
   @graphql_response_errors "graphql.response.errors"
   @graphql_response_result "graphql.response.result"
 
   def handle_start(name, measurement, metadata, config)
 
-  # TODO: It might be better to extract context from phases rather than options.
-  # Also, we must hide sensitive information in the context.
-  # TODO: Use context.
   def handle_start(
         [:absinthe, :execute, :operation, :start] = _name,
         _measurement,
         %{blueprint: %Blueprint{input: input} = _blueprint, options: options} = _metadata,
-        _config
+        config
       )
       when is_list(options) do
     with {:ok, schema} <- Keyword.fetch(options, :schema),
          {:ok, variables} <- Keyword.fetch(options, :variables),
          {:ok, variables} <- Jason.encode(variables),
-         {:ok, _context} <- Keyword.fetch(options, :context) do
-      attributes = [
-        {@graphql_document, input},
-        {@graphql_request_variables, variables},
-        {@graphql_request_schema, schema}
-      ]
+         {:ok, context} <- Keyword.fetch(options, :context) do
+      attributes =
+        []
+        |> Util.append({@graphql_document, input}, fn ->
+          config[:request_document]
+        end)
+        |> Util.append({@graphql_request_variables, variables}, fn ->
+          config[:request_variables]
+        end)
+        |> Util.append({@graphql_request_schema, schema}, fn ->
+          config[:request_schema]
+        end)
+        |> Util.append_lazy(
+          fn ->
+            trace_context =
+              (config[:request_context] || [])
+              |> Enum.reduce(%{}, fn nested_path, acc ->
+                value = get_in(context, nested_path)
+
+                # IO.inspect(get_in(context, nested_path))
+                # IO.inspect([get_in(context, nested_path) | nested_path])
+                # [Enum.join([get_in(context, nested_path) | nested_path], ".") | acc]
+                # [{Enum.join(nested_path, "."), value} | acc]
+                Map.put(acc, Enum.join(nested_path, "."), value)
+              end)
+
+            {@graphql_request_context, Jason.encode!(trace_context)}
+          end,
+          fn -> config[:request_context] != [] end
+        )
 
       put_span_context_from_parent()
       span = Tracer.start_span("GraphQL Operation", %{kind: :server, attributes: attributes})
@@ -50,43 +75,84 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
 
   def handle_start(_, _, _, _), do: :error
 
-  # TODO: Set status.
   def handle_stop(
         [:absinthe, :execute, :operation, :stop] = _name,
         _measurement,
         %{blueprint: %Absinthe.Blueprint{result: result} = blueprint} = _metadata,
-        _config
+        config
       ) do
-    with %Absinthe.Blueprint.Document.Operation{
+    case Absinthe.Blueprint.current_operation(blueprint) do
+      %Absinthe.Blueprint.Document.Operation{
+        name: operation_name,
+        type: operation_type
+      } = operation ->
+        attributes = build_final_attributes(operation, result, config)
+
+        span_name = "#{to_string(operation_type)} #{to_string(operation_name)}"
+        Tracer.update_name(span_name)
+
+        Tracer.set_attributes(attributes)
+        Tracer.end_span()
+        restore_span_context()
+
+        :ok
+
+      _ ->
+        :error
+    end
+  end
+
+  defp build_final_attributes(
+         %Absinthe.Blueprint.Document.Operation{
            name: operation_name,
            type: operation_type,
            selections: operation_selections,
            complexity: operation_complexity,
            errors: errors
-         } <- Absinthe.Blueprint.current_operation(blueprint),
-         operation_selections <-
-           serialize_selections(operation_selections) do
-      attributes = [
-        {@graphql_operation_type, operation_type},
-        {@graphql_operation_name, operation_name},
-        {@graphql_request_selections, operation_selections},
-        {@graphql_request_complexity, operation_complexity},
-        {@graphql_response_errors, Jason.encode!(errors)},
-        {@graphql_response_result, Jason.encode!(result)}
-      ]
+         },
+         result,
+         config
+       ) do
+    []
+    |> Util.append({@graphql_operation_type, operation_type})
+    |> Util.append({@graphql_operation_name, operation_name})
+    |> Util.append_lazy(
+      fn ->
+        {@graphql_request_selections, serialize_selections(operation_selections)}
+      end,
+      fn -> config[:request_selections] end
+    )
+    |> Util.append({@graphql_request_complexity, operation_complexity}, fn ->
+      config[:request_complexity]
+    end)
+    |> Util.append_lazy(
+      fn ->
+        case Jason.encode(errors) do
+          {:ok, encoded_errors} ->
+            {@graphql_response_errors, encoded_errors}
 
-      span_name = "#{to_string(operation_type)} #{to_string(operation_name)}"
-      Tracer.update_name(span_name)
+          {:error, error} ->
+            {@graphql_response_errors, Jason.encode!(error)}
+        end
+      end,
+      fn ->
+        config[:response_errors]
+      end
+    )
+    |> Util.append_lazy(
+      fn ->
+        case Jason.encode(result) do
+          {:ok, encoded_result} ->
+            {@graphql_response_result, encoded_result}
 
-      # Tracer.set_status(status)
-      Tracer.set_attributes(attributes)
-      Tracer.end_span()
-      restore_span_context()
-
-      :ok
-    else
-      _error -> nil
-    end
+          {:error, error} ->
+            {@graphql_response_result, Jason.encode!(error)}
+        end
+      end,
+      fn ->
+        config[:response_result]
+      end
+    )
   end
 
   defp serialize_selections(selections) when is_list(selections) do
@@ -114,7 +180,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
 
   defp serialize_field(%Absinthe.Blueprint.Document.Fragment.Spread{}), do: "*"
 
-  # TODO: There might be more relevant info here.
+  # TODO: Check for relevant info here.
   defp serialize_field(%Absinthe.Blueprint.Document.Fragment.Inline{
          selections: selections,
          type_condition: %Absinthe.Blueprint.TypeReference.Name{name: name}

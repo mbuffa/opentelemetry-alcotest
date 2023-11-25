@@ -1,4 +1,5 @@
 defmodule OpentelemetryBreathalyzer.SpanCase do
+  @moduledoc false
   use ExUnit.CaseTemplate
 
   setup do

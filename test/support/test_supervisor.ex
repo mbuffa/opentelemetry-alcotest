@@ -1,4 +1,6 @@
 defmodule TestSupervisor do
+  @moduledoc false
+
   use Application
 
   @impl true

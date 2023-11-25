@@ -1,4 +1,5 @@
 defmodule OpentelemetryBreathalyzer.ExecuteMiddleware do
+  @moduledoc false
   use OpentelemetryBreathalyzer.Traceable
 
   @graphql_batch_fun "graphql.batch.fun"

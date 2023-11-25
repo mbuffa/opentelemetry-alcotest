@@ -1,8 +1,47 @@
 defmodule OpentelemetryBreathalyzer do
   @moduledoc """
-  Documentation for `OpentelemetryBreathalyzer`.
+  Breathalyzer is an OpenTelemetry tracker for Absinthe.
 
-  TODO
+  * Add it to your dependencies:
+
+  ```
+  defp deps do
+    [
+      ...,
+      {:opentelemetry_breathalyzer, "~> 0.1.0"}
+    ]
+  end
+  ```
+
+  * Configure it:
+
+  ```
+  config :opentelemetry_breathalyzer, :track,
+    execute_operation: [
+      request_document: true,
+      request_schema: true,
+      request_selections: false,
+      request_variables: true,
+      request_complexity: false,
+      response_errors: true,
+      response_result: false,
+      request_context: [[:current_user, :id]]
+    ]
+  ```
+
+  * And setup it just before your application supervisor starts:
+
+  ```
+    defmodule MyApplication do
+      def start(_type, args) do
+        opts = [strategy: :one_for_one, name: MySupervisor]
+        OpentelemetryBreathalyzer.setup()
+        Supervisor.start_link(children(args), opts)
+    end
+  end
+  ```
+
+  * There you go. You should start seeing traces popping into your OpenTelemetry store.
   """
 
   # Absinthe Telemetry documentation:
@@ -16,13 +55,25 @@ defmodule OpentelemetryBreathalyzer do
     ExecuteMiddleware
   }
 
-  def setup(_instrumentation_opts \\ []) do
-    # FIXME: Pull actual configuration from env
-    config = %{}
+  @default_config [
+    execute_operation: [
+      request_document: true,
+      request_schema: true,
+      request_selections: false,
+      request_variables: true,
+      request_complexity: false,
+      response_errors: true,
+      response_result: false,
+      request_context: []
+    ]
+  ]
 
-    :ok = attach_execute_operation_handler(config)
-    :ok = attach_resolve_field_handler(config)
-    :ok = attach_execute_middleware_handler(config)
+  def setup(_instrumentation_opts \\ []) do
+    config = Application.get_env(:opentelemetry_breathalyzer, :track, @default_config)
+
+    :ok = attach_execute_operation_handler(config[:execute_operation])
+    :ok = attach_resolve_field_handler(config[:resolve_field])
+    :ok = attach_execute_middleware_handler(config[:execute_middleware])
   end
 
   def teardown do

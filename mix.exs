@@ -42,6 +42,7 @@ defmodule OpentelemetryBreathalyzer.MixProject do
       # Required for testing Absinthe batch middlewares:
       {:opentelemetry_process_propagator, "~> 0.2.2", only: :test},
       # Dev dependencies
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: :dev}
     ]
   end

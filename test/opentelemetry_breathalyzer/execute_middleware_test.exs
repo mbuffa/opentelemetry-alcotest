@@ -17,7 +17,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteMiddlewareTest do
   end
 
   test "span name" do
-    assert_receive {:span, span(name: "GraphQL Middleware Batch alice")}, 5000
+    assert_receive {:span, span(name: "GraphQL Middleware Batch 1")}, 5000
   end
 
   test "span kind" do
@@ -28,19 +28,19 @@ defmodule OpentelemetryBreathalyzer.ExecuteMiddlewareTest do
     assert_receive {:span, span}, 5000
     span(attributes: {:attributes, _, _, _, attributes}) = span
 
-    assert attributes == %{
+    assert %{
              "graphql.batch.fun" => "Elixir.OpentelemetryBreathalyzerWeb.Schema;users_by_id",
              "graphql.batch.opts" => "[]",
              "graphql.batch.result" =>
-               "Elixir.OpentelemetryBreathalyzerWeb.Schema;users_by_id;alice;id;alice;name;Alice;bob;id;bob;name;Bob"
-           }
+               "Elixir.OpentelemetryBreathalyzerWeb.Schema;users_by_id;1;id;1;name;Alice;2;id;2;name;Bob"
+           } == attributes
   end
 
   test "data", %{data: data} do
     assert %{
              data: %{
                "item" => %{
-                 "author" => %{"id" => "alice", "name" => "Alice"},
+                 "author" => %{"id" => "1", "name" => "Alice"},
                  "id" => "foo",
                  "name" => "Foo"
                }

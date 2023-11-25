@@ -1,6 +1,17 @@
-# OpentelemetryBreathalyzer
+# OpenTelemetry Breathalyzer
 
-**TODO: Add description**
+Breathalyzer is an OpenTelemetry tracker for Absinthe. It
+supports the most useful metrics Absinthe exposes, and should be relatively
+safe to use for production, although it is in early testing still.
+
+Breathalyzer supports tracking operations, field and batches resolutions.
+
+## Contributing
+
+Please feel free to open issues, fork and open pull requests.
+
+Constructive criticism is always appreciated. Also, `TODO.md` and `TODO`
+annotations should be a good start if you're looking for easy improvements.
 
 ## Installation
 

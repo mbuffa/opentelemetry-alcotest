@@ -1,14 +1,15 @@
 defmodule OpentelemetryBreathalyzerWeb.Schema do
+  @moduledoc false
   use Absinthe.Schema
 
   @items %{
-    "foo" => %{id: "foo", name: "Foo", author_id: "alice"},
-    "bar" => %{id: "bar", name: "Bar", author_id: "bob"}
+    "foo" => %{id: "foo", name: "Foo", author_id: "1"},
+    "bar" => %{id: "bar", name: "Bar", author_id: "2"}
   }
 
   @users %{
-    "alice" => %{id: "alice", name: "Alice"},
-    "bob" => %{id: "bob", name: "Bob"}
+    "1" => %{id: "1", name: "Alice"},
+    "2" => %{id: "2", name: "Bob"}
   }
 
   object(:user) do
