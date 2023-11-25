@@ -4,6 +4,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
   use OpentelemetryBreathalyzer.Traceable
 
   require OpenTelemetry.SemanticConventions.Trace, as: Conventions
+  require Logger
 
   alias Absinthe.Blueprint
   alias OpentelemetryBreathalyzer.Util
@@ -50,12 +51,8 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
             trace_context =
               (config[:request_context] || [])
               |> Enum.reduce(%{}, fn nested_path, acc ->
-                value = get_in(context, nested_path)
+                value = extract_context(context, nested_path)
 
-                # IO.inspect(get_in(context, nested_path))
-                # IO.inspect([get_in(context, nested_path) | nested_path])
-                # [Enum.join([get_in(context, nested_path) | nested_path], ".") | acc]
-                # [{Enum.join(nested_path, "."), value} | acc]
                 Map.put(acc, Enum.join(nested_path, "."), value)
               end)
 
@@ -74,6 +71,15 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation do
   end
 
   def handle_start(_, _, _, _), do: :error
+
+  defp extract_context(%{} = context, nested_path) do
+    get_in(context, nested_path)
+  end
+
+  defp extract_context(context, _) do
+    Logger.warning("Unsupported context #{inspect(context)}")
+    nil
+  end
 
   def handle_stop(
         [:absinthe, :execute, :operation, :stop] = _name,
