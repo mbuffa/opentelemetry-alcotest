@@ -1,5 +1,6 @@
 # TODO
 
+* [ ] Allow users to decide to start the handlers they want
 * [x] Allow users to set what they want to include in their spans
   * [x] Make sure we can include optional context items for operations (like the current user id)
 * [x] Add the minimum requirements for testing (Phoenix app, GraphQL schema...)
