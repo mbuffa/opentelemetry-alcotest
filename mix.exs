@@ -9,6 +9,7 @@ defmodule OpentelemetryBreathalyzer.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
+      description: description(),
       package: package(),
       elixirc_paths: elixirc_paths(Mix.env()),
       aliases: aliases()
@@ -52,6 +53,10 @@ defmodule OpentelemetryBreathalyzer.MixProject do
       main: "OpentelemetryBreathalyzer",
       formatters: ["html"]
     ]
+  end
+
+  defp description do
+    "An OpenTelemetry tracker for Absinthe (with Operation, Resolve and Middleware support)."
   end
 
   defp package do
