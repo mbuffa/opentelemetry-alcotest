@@ -61,7 +61,7 @@ defmodule OpentelemetryBreathalyzer.MixProject do
 
   defp package do
     [
-      name: "opentelemetry-breathalyzer",
+      name: "opentelemetry_breathalyzer",
       maintainers: ["Maxime Buffa"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/mbuffa/opentelemetry-breathalyzer"}
