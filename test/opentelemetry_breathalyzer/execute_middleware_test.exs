@@ -2,7 +2,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteMiddlewareTest do
   use OpentelemetryBreathalyzer.SpanCase, async: false
 
   setup do
-    OpentelemetryBreathalyzer.attach_execute_middleware_handler(%{})
+    OpentelemetryBreathalyzer.attach_handler(:execute_middleware, %{})
 
     {:ok, query} = File.read("test/support/web/graphql/queries/Item.gql")
 
@@ -10,7 +10,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteMiddlewareTest do
       Absinthe.run(query, OpentelemetryBreathalyzerWeb.Schema, variables: %{"id" => "foo"})
 
     on_exit(fn ->
-      OpentelemetryBreathalyzer.detach_execute_middleware_handler()
+      OpentelemetryBreathalyzer.detach_handler(:execute_middleware)
     end)
 
     {:ok, %{data: data}}

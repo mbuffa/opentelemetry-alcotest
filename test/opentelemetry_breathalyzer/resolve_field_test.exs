@@ -2,7 +2,7 @@ defmodule OpentelemetryBreathalyzer.ResolveFieldTest do
   use OpentelemetryBreathalyzer.SpanCase, async: false
 
   setup do
-    OpentelemetryBreathalyzer.attach_resolve_field_handler(%{})
+    OpentelemetryBreathalyzer.attach_handler(:resolve_field, %{})
 
     {:ok, query} = File.read("test/support/web/graphql/queries/Item.gql")
 
@@ -10,7 +10,7 @@ defmodule OpentelemetryBreathalyzer.ResolveFieldTest do
       Absinthe.run(query, OpentelemetryBreathalyzerWeb.Schema, variables: %{"id" => "foo"})
 
     on_exit(fn ->
-      OpentelemetryBreathalyzer.detach_resolve_field_handler()
+      OpentelemetryBreathalyzer.detach_handler(:resolve_field)
     end)
 
     {:ok, %{data: data}}

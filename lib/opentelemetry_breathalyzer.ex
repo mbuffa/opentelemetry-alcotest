@@ -68,85 +68,99 @@ defmodule OpentelemetryBreathalyzer do
     ]
   ]
 
-  def setup(_instrumentation_opts \\ []) do
+  @default_handlers [
+    :execute_operation,
+    :resolve_field,
+    :execute_middleware
+  ]
+
+  def setup(instrumentation_opts \\ []) do
     config = Application.get_env(:opentelemetry_breathalyzer, :track, @default_config)
 
-    :ok = attach_execute_operation_handler(config[:execute_operation])
-    :ok = attach_resolve_field_handler(config[:resolve_field])
-    :ok = attach_execute_middleware_handler(config[:execute_middleware])
+    Keyword.get(instrumentation_opts, :only, @default_handlers)
+    |> Enum.each(fn
+      atom when is_atom(atom) ->
+        attach_handler(atom, config[atom])
+
+      _ ->
+        raise "Unsupported :only configuration. Supported values are: :execute_operation, :resolve_field, :execute_middleware"
+    end)
   end
 
   def teardown do
-    detach_execute_operation_handler()
-    detach_resolve_field_handler()
-    detach_execute_middleware_handler()
+    detach_handler(:execute_operation)
+    detach_handler(:resolve_field)
+    detach_handler(:execute_middleware)
   end
 
-  def attach_execute_operation_handler(config) do
-    :ok =
-      :telemetry.attach(
-        {ExecuteOperation, :start},
-        [:absinthe, :execute, :operation, :start],
-        &ExecuteOperation.handle_start/4,
-        config
-      )
-
-    :ok =
-      :telemetry.attach(
-        {ExecuteOperation, :stop},
-        [:absinthe, :execute, :operation, :stop],
-        &ExecuteOperation.handle_stop/4,
-        config
-      )
+  def attach_handler(:execute_operation, config \\ %{}) do
+    with :ok <-
+           :telemetry.attach(
+             {ExecuteOperation, :start},
+             [:absinthe, :execute, :operation, :start],
+             &ExecuteOperation.handle_start/4,
+             config
+           ),
+         :ok <-
+           :telemetry.attach(
+             {ExecuteOperation, :stop},
+             [:absinthe, :execute, :operation, :stop],
+             &ExecuteOperation.handle_stop/4,
+             config
+           ) do
+      :ok
+    end
   end
 
-  def detach_execute_operation_handler do
+  def attach_handler(:resolve_field, config \\ %{}) do
+    with :ok <-
+           :telemetry.attach(
+             {ResolveField, :start},
+             [:absinthe, :resolve, :field, :start],
+             &ResolveField.handle_start/4,
+             config
+           ),
+         :ok <-
+           :telemetry.attach(
+             {ResolveField, :stop},
+             [:absinthe, :resolve, :field, :stop],
+             &ResolveField.handle_stop/4,
+             config
+           ) do
+      :ok
+    end
+  end
+
+  def attach_handler(:execute_middleware, config \\ %{}) do
+    with :ok <-
+           :telemetry.attach(
+             {ExecuteMiddleware, :start},
+             [:absinthe, :middleware, :batch, :start],
+             &ExecuteMiddleware.handle_start/4,
+             config
+           ),
+         :ok <-
+           :telemetry.attach(
+             {ExecuteMiddleware, :stop},
+             [:absinthe, :middleware, :batch, :stop],
+             &ExecuteMiddleware.handle_stop/4,
+             config
+           ) do
+      :ok
+    end
+  end
+
+  def detach_handler(:execute_operation) do
     :telemetry.detach({ExecuteOperation, :start})
     :telemetry.detach({ExecuteOperation, :stop})
   end
 
-  def attach_resolve_field_handler(config) do
-    :ok =
-      :telemetry.attach(
-        {ResolveField, :start},
-        [:absinthe, :resolve, :field, :start],
-        &ResolveField.handle_start/4,
-        config
-      )
-
-    :ok =
-      :telemetry.attach(
-        {ResolveField, :stop},
-        [:absinthe, :resolve, :field, :stop],
-        &ResolveField.handle_stop/4,
-        config
-      )
-  end
-
-  def detach_resolve_field_handler() do
+  def detach_handler(:resolve_field) do
     :telemetry.detach({ResolveField, :start})
     :telemetry.detach({ResolveField, :stop})
   end
 
-  def attach_execute_middleware_handler(config) do
-    :ok =
-      :telemetry.attach(
-        {ExecuteMiddleware, :start},
-        [:absinthe, :middleware, :batch, :start],
-        &ExecuteMiddleware.handle_start/4,
-        config
-      )
-
-    :ok =
-      :telemetry.attach(
-        {ExecuteMiddleware, :stop},
-        [:absinthe, :middleware, :batch, :stop],
-        &ExecuteMiddleware.handle_stop/4,
-        config
-      )
-  end
-
-  def detach_execute_middleware_handler() do
+  def detach_handler(:execute_middleware) do
     :telemetry.detach({ExecuteMiddleware, :start})
     :telemetry.detach({ExecuteMiddleware, :stop})
   end

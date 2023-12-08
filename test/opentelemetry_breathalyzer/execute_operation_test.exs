@@ -16,7 +16,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperationTest do
         ]
       }
 
-      OpentelemetryBreathalyzer.attach_execute_operation_handler(config[:execute_operation])
+      OpentelemetryBreathalyzer.attach_handler(:execute_operation, config[:execute_operation])
 
       {:ok, query} = File.read("test/support/web/graphql/queries/Item.gql")
 
@@ -24,7 +24,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperationTest do
         Absinthe.run(query, OpentelemetryBreathalyzerWeb.Schema, variables: %{"id" => "foo"})
 
       on_exit(fn ->
-        OpentelemetryBreathalyzer.detach_execute_operation_handler()
+        OpentelemetryBreathalyzer.detach_handler(:execute_operation)
       end)
 
       {:ok, %{data: data}}
@@ -69,7 +69,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperationTest do
         ]
       }
 
-      OpentelemetryBreathalyzer.attach_execute_operation_handler(config[:execute_operation])
+      OpentelemetryBreathalyzer.attach_handler(:execute_operation, config[:execute_operation])
 
       {:ok, query} = File.read("test/support/web/graphql/queries/Item.gql")
 
@@ -77,7 +77,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperationTest do
         Absinthe.run(query, OpentelemetryBreathalyzerWeb.Schema, variables: %{"id" => "foo"})
 
       on_exit(fn ->
-        OpentelemetryBreathalyzer.detach_execute_operation_handler()
+        OpentelemetryBreathalyzer.detach_handler(:execute_middleware)
       end)
 
       {:ok, %{data: data}}
