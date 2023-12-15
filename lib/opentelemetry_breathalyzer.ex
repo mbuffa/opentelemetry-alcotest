@@ -93,7 +93,9 @@ defmodule OpentelemetryBreathalyzer do
     detach_handler(:execute_middleware)
   end
 
-  def attach_handler(:execute_operation, config \\ %{}) do
+  def attach_handler(type, config \\ %{})
+
+  def attach_handler(:execute_operation, config) do
     with :ok <-
            :telemetry.attach(
              {ExecuteOperation, :start},
@@ -112,7 +114,7 @@ defmodule OpentelemetryBreathalyzer do
     end
   end
 
-  def attach_handler(:resolve_field, config \\ %{}) do
+  def attach_handler(:resolve_field, config) do
     with :ok <-
            :telemetry.attach(
              {ResolveField, :start},
@@ -131,7 +133,7 @@ defmodule OpentelemetryBreathalyzer do
     end
   end
 
-  def attach_handler(:execute_middleware, config \\ %{}) do
+  def attach_handler(:execute_middleware, config) do
     with :ok <-
            :telemetry.attach(
              {ExecuteMiddleware, :start},
