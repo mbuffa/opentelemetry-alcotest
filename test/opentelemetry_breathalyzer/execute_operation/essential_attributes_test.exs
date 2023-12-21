@@ -18,7 +18,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation.EssentialAttributesTest do
     end)
   end
 
-  describe "with some attributes tracked (document, schema, variables, errors)" do
+  describe "with some attributes traced (document, schema, variables, errors)" do
     setup do
       {:ok, query} = File.read("test/support/web/graphql/queries/Item.gql")
 

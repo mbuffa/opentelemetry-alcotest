@@ -4,7 +4,7 @@ defmodule OpentelemetryBreathalyzer.MixProject do
   def project do
     [
       app: :opentelemetry_breathalyzer,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -56,7 +56,7 @@ defmodule OpentelemetryBreathalyzer.MixProject do
   end
 
   defp description do
-    "An OpenTelemetry tracker for Absinthe (with Operation, Resolve and Middleware support)."
+    "An OpenTelemetry tracer for Absinthe (with Operation, Resolve and Middleware support)."
   end
 
   defp package do

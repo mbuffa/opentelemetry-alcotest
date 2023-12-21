@@ -1,10 +1,10 @@
 # OpenTelemetry Breathalyzer
 
-Breathalyzer is an OpenTelemetry tracker for Absinthe. It
+Breathalyzer is an OpenTelemetry tracer for Absinthe. It
 supports the most useful metrics Absinthe exposes, and should be relatively
 safe to use for production, although it is in early testing still.
 
-Breathalyzer supports tracking operations, field and batches resolutions.
+Breathalyzer supports tracing operations, field and batches resolutions.
 
 ## Contributing
 

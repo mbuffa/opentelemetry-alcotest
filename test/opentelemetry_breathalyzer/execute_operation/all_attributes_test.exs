@@ -22,7 +22,7 @@ defmodule OpentelemetryBreathalyzer.ExecuteOperation.AllAttributesTest do
     end)
   end
 
-  describe "with all attributes tracked" do
+  describe "with all attributes traced" do
     setup do
       {:ok, query} = File.read("test/support/web/graphql/queries/Item.gql")
 

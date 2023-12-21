@@ -1,6 +1,6 @@
 defmodule OpentelemetryBreathalyzer do
   @moduledoc """
-  Breathalyzer is an OpenTelemetry tracker for Absinthe.
+  Breathalyzer is an OpenTelemetry tracer for Absinthe.
 
   * Add it to your dependencies:
 
@@ -16,7 +16,7 @@ defmodule OpentelemetryBreathalyzer do
   * Configure it:
 
   ```
-  config :opentelemetry_breathalyzer, :track,
+  config :opentelemetry_breathalyzer, :trace,
     execute_operation: [
       request_document: true,
       request_schema: true,
@@ -32,12 +32,21 @@ defmodule OpentelemetryBreathalyzer do
   * And setup it just before your application supervisor starts:
 
   ```
-    defmodule MyApplication do
-      def start(_type, args) do
-        opts = [strategy: :one_for_one, name: MySupervisor]
-        OpentelemetryBreathalyzer.setup()
-        Supervisor.start_link(children(args), opts)
-    end
+  defmodule MyApplication do
+    def start(_type, args) do
+      opts = [strategy: :one_for_one, name: MySupervisor]
+      OpentelemetryBreathalyzer.setup()
+      Supervisor.start_link(children(args), opts)
+  end
+  ```
+
+  * You may also choose to start only a couple of handlers:
+  ```
+  defmodule MyApplication do
+    def start(_type, args) do
+      opts = [strategy: :one_for_one, name: MySupervisor]
+      OpentelemetryBreathalyzer.setup(only: [:execute_operation, :execute_middleware]])
+      Supervisor.start_link(children(args), opts)
   end
   ```
 
@@ -75,7 +84,7 @@ defmodule OpentelemetryBreathalyzer do
   ]
 
   def setup(instrumentation_opts \\ []) do
-    config = Application.get_env(:opentelemetry_breathalyzer, :track, @default_config)
+    config = Application.get_env(:opentelemetry_breathalyzer, :trace, @default_config)
 
     Keyword.get(instrumentation_opts, :only, @default_handlers)
     |> Enum.each(fn
